@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  overflow: hidden;
 }
 p {
   font-family: 'Open Sans', sans-serif;
@@ -27,8 +28,13 @@ p {
   margin-top: 1em;
   text-align: center;
 }
+#canvas {
+  position: absolute;
+  top: 0;
+  z-index: -2;
+}
 .profileInformation {
-  background-color: white;
+  background-color: #fcfcfc;
   padding: 3px;
   padding-left: 20px;
   padding-right: 20px;
@@ -38,18 +44,6 @@ p {
 .profileInformation:hover {
   padding-top: 10px;
   padding-bottom: 10px;
-}
-#background {
-  overflow: hidden;
-  position: absolute;
-  z-index: -1;
-  top: 0%;
-  left: 0%;
-  width: 100vw;
-  height: 100vh;
-  background-image: url("../img/background.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
 }
 @media only screen and (max-width: 500px) {
   #cardHolder {
