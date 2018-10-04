@@ -1,62 +1,76 @@
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
-var ballList = {};
-var amountOfBalls = 1000;
-for(var x = 0;x<amountOfBalls;x++){
-	ballList[x] = makeBall(x);
+var particleList = {};//To hold all the particles in a hash like datastructure
+var useHexSet = true;//Use the below hex set for colors of particles
+var particleHexSet = ["#3498db","#2ecc71"]
+var amountOfParticles = window.innerHeight;//Amount of particles on the screen
+var fps = 10;//Fps, careful, too high and you get glitching, too low jumping
+var xSpeed = .2;
+var ySpeed = .2;
+var particleSize = 4;//Size of the particles
+var raf;//reference to ongoing animation
+
+initializeVariables();
+draw();//Initial draw call
+
+//Initialize variables, put in this function for ease of use
+function initializeVariables(){
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	for(var x = 0;x<amountOfParticles;x++){
+		particleList[x] = makeParticle(x);
+	}
+	fps = 1000/fps;
 }
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-var raf;
-function makeBall(ballNumber){
-	var width = Math.floor(Math.random() * Math.floor(window.innerWidth))
-	var height = Math.floor(Math.random() * Math.floor(window.innerHeight))
+
+function makeParticle(particleNumber){//Make a single particle
+	var chosenColor = null;
+	//Choose a random place that is within the current window
+	var xOffset = Math.floor(Math.random() * Math.floor(window.innerWidth))
+	var yOffset = Math.floor(Math.random() * Math.floor(window.innerHeight))
 	var randNeg1 = Math.floor(Math.random() * Math.floor(2));
 	var randNeg2 = Math.floor(Math.random() * Math.floor(2));
+	//choosing random direction that the particle goes
 	if(randNeg1 == 0){
 		randNeg1 = -1;
 	}
 	if(randNeg2 == 0){
 		randNeg2 = -1;
 	}
-	/*if(window.innerWidth/2 <= width){
-		width = width - window.innerWidth;
-	}else{
-		width = width + window.innerWidth;
+	if(useHexSet){
+		var chosenColor = getHexFromSet();
+	}else{	
+		var chosenColor = getRandomHex();
 	}
-	if(window.innerHeight/2 <= height){
-		height = height - window.innerHeight ;
-	}else{
-		height = height + window.innerHeight ;
-	}*/
-	var ball = {
-		number: ballNumber,
-	  	x: width,
-	  	y: height,
-	  	vx: 1.5 * randNeg1,
-	  	vy: 1.5 * randNeg2,
-	  	size: 2,
-	  	color: getRandomHex(),
-	  	draw: function() {
+	var particle = {
+		number: particleNumber,
+	  	x: xOffset,
+	  	y: yOffset,
+	  	vx: xSpeed * randNeg1,
+	  	vy: ySpeed * randNeg2,
+	  	size: particleSize,
+	  	color: chosenColor,
+	  	draw: function() {//actual drawing of the particle
 		    ctx.fillStyle = this.color;
 		    ctx.fillRect(this.x,this.y,this.size,this.size);
 		}
 	}
-	return ball;
+	return particle;
 }
 
 function draw() {
   setTimeout(function(){
 	ctx.clearRect(0,0, canvas.width, canvas.height);
-	  var length = Object.keys(ballList).length;
+	  var length = Object.keys(particleList).length;
 	  for(var x = 0;x<length;x++){
-	  	ballList[x].draw();
-	  	ballList[x].x += ballList[x].vx;
-	  	ballList[x].y += ballList[x].vy;
+	  	particleList[x].x += particleList[x].vx;//change the positioning based on speed
+	  	particleList[x].y += particleList[x].vy;
+	  	particleList[x].draw();//Draw it on canvas
 	  }
-	  raf = window.requestAnimationFrame(draw);
-	},16);
+	  raf = window.requestAnimationFrame(draw);//request a canvas update, calls draw function after
+	},fps);
 }
+
 function getRandomHex(){
 	var string = "#";
 	var possibleValues = [0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f'];
@@ -65,4 +79,8 @@ function getRandomHex(){
 	}
 	return string;
 }
-draw();
+
+function getHexFromSet(){
+	var string = particleHexSet[Math.floor(Math.random() * Math.floor(particleHexSet.length))];
+	return string;
+}
