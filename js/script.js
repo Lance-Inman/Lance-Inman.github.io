@@ -15,14 +15,13 @@ draw();//Initial draw call
 
 //Initialize variables, put in this function for ease of use
 function initializeVariables(){
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+	canvas.width = document.getElementsByTagName('body')[0].offsetWidth;
+	canvas.height = document.getElementsByTagName('body')[0].offsetHeight;
 	for(var x = 0;x<amountOfParticles;x++){
 		particleList[x] = makeParticle(x);
 	}
 	fps = 1000/fps;
 }
-
 function makeParticle(particleNumber){//Make a single particle
 	var chosenColor = null;
 	//Choose a random place that is within the current window
